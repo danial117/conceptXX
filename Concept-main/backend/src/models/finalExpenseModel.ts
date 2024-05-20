@@ -1,14 +1,11 @@
 import { modelOptions, prop, getModelForClass } from '@typegoose/typegoose';
 
 @modelOptions({ schemaOptions: { timestamps: true } })
-export class MedicareAdvantageData {
+export class FinalExpenseData {
   public _id?: string;
   
   @prop({ required: true })
-  public firstName!: string;
-  
-  @prop({ required: true })
-  public lastName!: string;
+  public name!: string;
   
   @prop({ required: true, unique: true })
   public email!: string;
@@ -23,4 +20,4 @@ export class MedicareAdvantageData {
   public leadID!: string;
 }
 
-export const MedicareAdvantageModel = getModelForClass(MedicareAdvantageData);
+export const FinalExpenseModel = getModelForClass(FinalExpenseData);

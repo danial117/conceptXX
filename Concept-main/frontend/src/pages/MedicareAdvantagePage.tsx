@@ -25,6 +25,8 @@ export default function MedicareAdvantagePage() {
     leadID:''
   });
 
+  const [token,setToken]=useState(false);
+
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -48,9 +50,15 @@ export default function MedicareAdvantagePage() {
     // This effect will run once when the component mounts
     const insertToken = (token) => {
       // Get the form element
-     console.log(token)
+     
+
+     setToken(token)
         // Get the element with id 'leadid_token'
         let tokenElement = document.getElementById('leadid_token');
+
+        fetch(`http://localhost:4000/api/users/leadID/${token}`,{
+          method:'GET'
+        }).then((response)=>response.json()).then((result)=>{console.log(result)})
         
 
 
@@ -119,6 +127,8 @@ export default function MedicareAdvantagePage() {
     e.preventDefault();
    
     try {
+      if(token){
+        
       const data = await signin(formData);
       localStorage.setItem('userData', JSON.stringify(data));
       
@@ -143,6 +153,7 @@ export default function MedicareAdvantagePage() {
 
       // localStorage.setItem('userInfo', JSON.stringify(data));
       window.location.href = '/';
+    }
     } catch (err) {
       toast.error(getError(err));
     } finally {

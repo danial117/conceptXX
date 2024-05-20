@@ -12,11 +12,10 @@ import { LinkContainer } from 'react-router-bootstrap'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Store } from './Store'
-import { generateId } from './utils/utils.js';
 import { Helmet } from 'react-helmet-async'
 function App() {
 
-  const [disappear,setDisappear]=useState(true)
+  const [disappear,setDisappear]=useState(false)
   const storedData = localStorage.getItem('userData') || '{}';
 const userData = JSON.parse(storedData);
 console.log(userData);
@@ -26,7 +25,34 @@ console.log(userData);
 
   useEffect(()=>{
 
-  },[])
+  },[]);
+
+
+
+  const handleDoubleClick = () => {
+    if (userData && userData.leadID) {
+      setDisappear(true)
+      navigator.clipboard.writeText(userData.leadID)
+        .then(() => {
+          setTimeout(()=>{
+            setDisappear(false)
+          },3000)
+         
+        })
+        .catch(err => {
+          console.error('Failed to copy leadID: ', err);
+        });
+    }
+  };
+
+
+  const button=()=>{
+    if(localStorage.getItem('userData'))
+   { 
+    localStorage.removeItem('userData');
+   }
+    window.location.href='/'
+  }
 
  
 
@@ -63,10 +89,13 @@ console.log(userData);
 
   useEffect(()=>{
     const timer = setTimeout(() => {
-      setDisappear(false);
-    }, 5000); // 10 seconds
+      
+      localStorage.removeItem('userData');
+     
+    }, 5000); 
 
-    // Cleanup the timer when the component unmounts
+    
+
     return () => clearTimeout(timer);
   },[])
 
@@ -104,13 +133,16 @@ console.log(userData);
                   {mode === 'light' ? 'Light' : 'Dark'}
                 </Link>
 
-                {disappear &&  <div style={{position:'absolute',width:'50%',height:'auto',background:'black',color:'white',top:'5%',left:'30%'}}>
-          <p style={{textAlign:'center'}}>leadID: {userData.leadID} </p>
-          <p style={{textAlign:'center'}}>Name: {userData.firstName + ' '+ userData.lastName}  </p>
-          <p style={{textAlign:'center'}}>Email: {userData.email} </p>
-          <p style={{textAlign:'center'}}>Phone: {userData.phone} </p>
-          <p style={{textAlign:'center'}}>zip: {userData.zipcode} </p>
+                {userData.leadID && <div style={{position:'absolute',width:'50%',height:'auto',background:'black',color:'white',top:'5%',left:'30%',padding:'10px',borderRadius:'10px'}}>
+          <p onDoubleClick={handleDoubleClick} style={{cursor:'pointer',userSelect: 'none'}} >leadID: {userData.leadID} </p>
+          <p >Name: {userData.firstName + ' '+ userData.lastName}  </p>
+          <p >Email: {userData.email} </p>
+          <p >Phone: {userData.phone} </p>
+          <p >zip: {userData.zipcode} </p>
+          <button onClick={button} style={{marginLeft:'auto',display:'flex',borderRadius:'6px',background:'black',color:'white',border: '2px solid pink',padding:'4px 12px'}}>OK</button>
           </div>}
+
+          
 
                 {userInfo ? (
                   <NavDropdown
@@ -195,6 +227,15 @@ console.log(userData);
         </Container>
       </main>
       <footer>
+      {disappear &&
+          <div style={{position:'absolute',width:'auto',height:'auto',background:'black',color:'white',bottom:'5%',left:'45%',padding:'2px 8px',borderRadius:'10px'}}>
+
+
+         <p className='text-center'>Text copied to clipboard</p>
+
+          </div>
+
+          }
         <div className="text-center">All rights reserved</div>
       </footer>
       
